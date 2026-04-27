@@ -10,10 +10,15 @@ const TAG = "[sfx]";
  * Cross-platform support:
  * - macOS:   afplay
  * - Linux:   paplay (PulseAudio), aplay (ALSA), fallback to terminal bell
- * - Windows: powershell + Media.SoundPlayer, fallback to terminal bell
+ * - Windows: powershell + Media.SoundPlayer (.wav), fallback to terminal bell
  */
 export function playSound(filePath: string): void {
   const os = platform();
+
+  // Windows SoundPlayer only handles .wav, so use the wav variant when available.
+  if (os === "win32" && filePath.endsWith(".mp3")) {
+    filePath = filePath.replace(/\.mp3$/, ".wav");
+  }
 
   try {
     if (os === "darwin") {
@@ -57,14 +62,13 @@ function tryPlayLinux(filePath: string): void {
 }
 
 function tryPlayWindows(filePath: string): void {
-  // Try PowerShell + Media.SoundPlayer
-  const psCommand = `(New-Object Media.SoundPlayer '${filePath}').PlaySync()`;
+  const psCommand = `(New-Object Media.SoundPlayer '${filePath.replace(/'/g, "''")}').PlaySync()`;
+
   execFile(
     "powershell",
-    ["-c", psCommand],
+    ["-NoProfile", "-Command", psCommand],
     (psErr) => {
       if (psErr) {
-        // Fallback: terminal bell
         console.error(
           `${TAG} powershell sound player failed for "${filePath}" — falling back to terminal bell`,
         );
