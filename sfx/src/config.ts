@@ -20,6 +20,8 @@ export interface SoundEventConfig {
  * All fields are optional; sensible defaults are provided (sounds ship with the plugin).
  */
 export interface SfxConfig {
+  /** Global volume multiplier (0–1). Applied to all sounds. */
+  volume: number;
   events: {
     idle: SoundEventConfig;
     error: SoundEventConfig;
@@ -41,7 +43,7 @@ const DEFAULT_ENABLED = {
   idle: true,
   error: true,
   testFail: true,
-  permission: false,
+  permission: true,
 } as const;
 
 /**
@@ -58,7 +60,12 @@ function resolveSoundPath(sound: string): string {
 export function resolveConfig(options?: PluginOptions): SfxConfig {
   const eventsOpt = (options?.events as Record<string, unknown>) ?? {};
 
+  const volume = clampVolume(
+    typeof options?.volume === "number" ? options.volume : 1.0,
+  );
+
   return {
+    volume,
     events: {
       idle: resolveEventConfig(eventsOpt["idle"], {
         enabled: DEFAULT_ENABLED.idle,
@@ -78,6 +85,12 @@ export function resolveConfig(options?: PluginOptions): SfxConfig {
       }),
     },
   };
+}
+
+function clampVolume(value: number): number {
+  if (value < 0) return 0;
+  if (value > 1) return 1;
+  return value;
 }
 
 function resolveEventConfig(

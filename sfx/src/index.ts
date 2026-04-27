@@ -12,7 +12,7 @@ import { containsTestFailure } from "./detectors.js";
  * - Top-level agent idle (waiting for user input)
  * - Session errors
  * - Test failures (detected from bash tool output)
- * - Permission requests (optional, disabled by default)
+ * - Permission requests
  */
 export const server = async (
   input: PluginInput,
@@ -43,7 +43,7 @@ export const server = async (
       ) {
         if (config.events.permission.enabled) {
           const perm = evt.properties as { permission?: string; sessionID: string };
-          playSound(config.events.permission.sound);
+          playSound(config.events.permission.sound, config.volume);
         }
         return;
       }
@@ -79,7 +79,7 @@ export const server = async (
             }
 
             idleCooldowns.set(sessionID, Date.now());
-            playSound(config.events.idle.sound);
+            playSound(config.events.idle.sound, config.volume);
           } catch {
           }
           break;
@@ -95,7 +95,7 @@ export const server = async (
           const err = evt.properties.error;
           if (err && (err as any).name === "MessageAbortedError") return;
 
-          playSound(config.events.error.sound);
+          playSound(config.events.error.sound, config.volume);
           break;
         }
 
@@ -125,7 +125,7 @@ export const server = async (
           : undefined;
 
       if (containsTestFailure(output.output, metadata, hookInput.args || output.args)) {
-        playSound(config.events.testFail.sound);
+        playSound(config.events.testFail.sound, config.volume);
       }
     },
   };

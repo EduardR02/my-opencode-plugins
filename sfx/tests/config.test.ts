@@ -17,7 +17,7 @@ describe("resolveConfig", () => {
     expect(config.events.error.sound).toBe(sound("error.mp3"));
     expect(config.events.testFail.enabled).toBe(true);
     expect(config.events.testFail.sound).toBe(sound("test-fail.mp3"));
-    expect(config.events.permission.enabled).toBe(false);
+    expect(config.events.permission.enabled).toBe(true);
     expect(config.events.permission.sound).toBe(sound("permission.mp3"));
   });
 
@@ -80,5 +80,25 @@ describe("resolveConfig", () => {
       events: { idle: "not-an-object" },
     } as any);
     expect(config.events.idle.enabled).toBe(true);
+  });
+
+  it("defaults volume to 1.0", () => {
+    const config = resolveConfig();
+    expect(config.volume).toBe(1.0);
+  });
+
+  it("parses custom volume", () => {
+    const config = resolveConfig({ volume: 0.5 } as any);
+    expect(config.volume).toBe(0.5);
+  });
+
+  it("clamps volume below 0 to 0", () => {
+    const config = resolveConfig({ volume: -0.5 } as any);
+    expect(config.volume).toBe(0);
+  });
+
+  it("clamps volume above 1 to 1", () => {
+    const config = resolveConfig({ volume: 1.5 } as any);
+    expect(config.volume).toBe(1);
   });
 });

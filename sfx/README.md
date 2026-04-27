@@ -7,7 +7,7 @@ Plays sound effects for OpenCode session events: agent idle, errors, test failur
 - **Idle notification** — plays a sound when the top-level agent finishes and waits for your input (subagent sessions are ignored)
 - **Error notification** — plays a sound on session errors
 - **Test failure detection** — scans bash tool output for test failure patterns and plays a failure sound
-- **Permission requests** — optional notification ping when the LLM asks for permission
+- **Permission requests** — notification ping when the LLM asks for permission
 
 ## Configuration
 
@@ -27,17 +27,21 @@ All options are optional. Defaults use macOS system sounds:
 
 ```jsonc
 ["./plugins/sfx", {
+  "volume": 1.0,
   "events": {
     "idle": { "enabled": true, "sound": "/System/Library/Sounds/Glass.aiff" },
     "error": { "enabled": true, "sound": "/System/Library/Sounds/Basso.aiff" },
     "testFail": { "enabled": true, "sound": "/System/Library/Sounds/Submarine.aiff" },
-    "permission": { "enabled": false, "sound": "/System/Library/Sounds/Ping.aiff" }
+    "permission": { "enabled": true, "sound": "/System/Library/Sounds/Ping.aiff" }
   }
 }]
 ```
 
+Plugin options accept:
+- `volume` (number) — global volume multiplier from `0` to `1` (default: `1.0`)
+
 Each event config accepts:
-- `enabled` (boolean) — whether to play sound (default: `true` for idle/error/testFail, `false` for permission)
+- `enabled` (boolean) — whether to play sound (default: `true` for all events)
 - `sound` (string) — path to the sound file
 
 ### Custom sounds
@@ -50,7 +54,7 @@ Override any event sound by setting `sound` in `opencode.jsonc`. Use a relative 
     "idle": { "enabled": true, "sound": "./my-sounds/idle.mp3" },
     "error": { "enabled": true, "sound": "/absolute/path/error.wav" },
     "testFail": { "enabled": true, "sound": "./my-sounds/fail.mp3" },
-    "permission": { "enabled": false, "sound": "./my-sounds/ping.aiff" }
+    "permission": { "enabled": true, "sound": "./my-sounds/ping.aiff" }
   }
 }]
 ```
@@ -62,8 +66,8 @@ Relative paths are resolved from the plugin directory. Absolute paths work cross
 | Platform | Player |
 |----------|--------|
 | macOS | `afplay` (built-in) |
-| Linux | `paplay` (PulseAudio), fallback to `aplay` (ALSA), fallback to terminal bell |
-| Windows | PowerShell `Media.SoundPlayer`, fallback to terminal bell |
+| Linux | `paplay` (PulseAudio) |
+| Windows | PowerShell `System.Media.SoundPlayer` |
 
 Missing sound files log a warning and don't crash.
 
