@@ -40,6 +40,23 @@ Each event config accepts:
 - `enabled` (boolean) — whether to play sound (default: `true` for idle/error/testFail, `false` for permission)
 - `sound` (string) — path to the sound file
 
+### Custom sounds
+
+Override any event sound by setting `sound` in `opencode.jsonc`. Use a relative path for sounds stored in the plugin directory, or an absolute path for sounds anywhere on your system.
+
+```jsonc
+["./plugins/sfx", {
+  "events": {
+    "idle": { "enabled": true, "sound": "./my-sounds/idle.mp3" },
+    "error": { "enabled": true, "sound": "/absolute/path/error.wav" },
+    "testFail": { "enabled": true, "sound": "./my-sounds/fail.mp3" },
+    "permission": { "enabled": false, "sound": "./my-sounds/ping.aiff" }
+  }
+}]
+```
+
+Relative paths are resolved from the plugin directory. Absolute paths work cross-platform too.
+
 ## Platform support
 
 | Platform | Player |
