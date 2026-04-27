@@ -1,0 +1,16 @@
+{
+  "name": "godshot",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "description": "OpenCode plugin: canonize completed task into a clean forked context with mechanical diffs",
+  "license": "MIT",
+  "dependencies": {
+    "@opencode-ai/plugin": "1.14.21"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.0",
+    "@types/node": "^22.0.0"
+  }
+}

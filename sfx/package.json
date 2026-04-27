@@ -1,0 +1,16 @@
+{
+  "name": "sfx",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "description": "OpenCode plugin: plays sound effects for session events (idle, error, test failures, permission requests)",
+  "license": "MIT",
+  "dependencies": {
+    "@opencode-ai/plugin": "1.14.21"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.0",
+    "@types/node": "^22.0.0"
+  }
+}
